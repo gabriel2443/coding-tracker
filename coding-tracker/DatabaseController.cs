@@ -36,5 +36,16 @@ namespace coding_tracker
                 return codingSessions;
             }
         }
+
+        internal void Delete(CodingSession coding)
+        {
+            var sql = $"DELETE FROM codingSession WHERE Id = {coding.Id}";
+
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                var deletedRows = connection.Execute(sql);
+                if (deletedRows == 0) Console.WriteLine("Rows can not be deleted or does not exist");
+            }
+        }
     }
 }

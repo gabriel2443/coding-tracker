@@ -34,12 +34,18 @@ namespace coding_tracker
                     case "2":
                         Add();
                         break;
+
+                    case "3":
+                        ProcessDelete();
+                        break;
                 }
             }
         }
 
         private void Get()
         {
+            var coding = new CodingSession();
+
             Console.WriteLine("---------------------------");
 
             databaseController.Read();
@@ -65,6 +71,27 @@ namespace coding_tracker
             Console.WriteLine(duration);
 
             databaseController.Insert(coding);
+        }
+
+        private void ProcessDelete()
+        {
+            var coding = new CodingSession();
+
+            Console.WriteLine("Please enter the id you want to delete");
+
+            Get();
+
+            var id = Console.ReadLine();
+
+            while (!Int32.TryParse(id, out _) || Convert.ToInt32(id) < 0)
+            {
+                Console.WriteLine("Id invalid please type another id");
+                id = Console.ReadLine();
+            }
+
+            coding.Id = Convert.ToInt32(id);
+
+            databaseController.Delete(coding);
         }
 
         private string GetStartEndTime(string message)
