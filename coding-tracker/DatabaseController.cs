@@ -27,11 +27,14 @@ namespace coding_tracker
                 var sql = @"SELECT * FROM codingSession";
 
                 var codingSessions = connection.Query<CodingSession>(sql).ToList();
-
-                foreach (var session in codingSessions)
+                if (codingSessions.Any())
                 {
-                    Console.WriteLine($"{session.Id} Start time: {session.StartTime} Endtime: {session.EndTime} Duration: {session.Duration}");
+                    foreach (var session in codingSessions)
+                    {
+                        Console.WriteLine($"{session.Id} Start time: {session.StartTime} Endtime: {session.EndTime} Duration: {session.Duration}");
+                    }
                 }
+                else Console.WriteLine("No rows found");
 
                 return codingSessions;
             }
@@ -45,6 +48,17 @@ namespace coding_tracker
             {
                 var deletedRows = connection.Execute(sql);
                 if (deletedRows == 0) Console.WriteLine("Rows can not be deleted or does not exist");
+            }
+        }
+
+        internal void Update(CodingSession coding)
+        {
+            var sql = $@"UPDATE codingSession SET StartTime = {coding.StartTime}, EndTime = {coding.EndTime}, Duration = {coding.Duration} WHERE Id = {coding.Id}";
+
+            using (var connection = new SqliteConnection(connectionString))
+            {
+                if (coding.Id == 0) Console.Write("no rows available to edit");
+                var updatedRows = connection.Execute(sql);
             }
         }
     }

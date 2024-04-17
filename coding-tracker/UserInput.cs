@@ -28,7 +28,7 @@ namespace coding_tracker
                         break;
 
                     case "1":
-                        Get();
+                        Get("Press any key to back to menu");
                         break;
 
                     case "2":
@@ -38,19 +38,29 @@ namespace coding_tracker
                     case "3":
                         ProcessDelete();
                         break;
+
+                    case "4":
+                        Update();
+                        break;
+
+                    default:
+                        Console.Clear();
+                        Console.WriteLine("Input invalid please choose a number between 1 and 4");
+                        break;
                 }
             }
         }
 
-        private void Get()
+        private void Get(string message)
         {
-            var coding = new CodingSession();
-
             Console.WriteLine("---------------------------");
 
             databaseController.Read();
 
             Console.WriteLine("---------------------------");
+            Console.WriteLine(message);
+            Console.ReadLine();
+            Console.Clear();
         }
 
         private void Add()
@@ -68,6 +78,8 @@ namespace coding_tracker
 
             var duration = GetDuration(startTime, endTime);
             coding.Duration = duration;
+            Console.WriteLine("Press any key to show your duration");
+
             Console.WriteLine(duration);
 
             databaseController.Insert(coding);
@@ -77,10 +89,7 @@ namespace coding_tracker
         {
             var coding = new CodingSession();
 
-            Console.WriteLine("Please enter the id you want to delete");
-
-            Get();
-
+            Get("Please enter the id you want to delete");
             var id = Console.ReadLine();
 
             while (!Int32.TryParse(id, out _) || Convert.ToInt32(id) < 0)
@@ -94,6 +103,21 @@ namespace coding_tracker
             databaseController.Delete(coding);
         }
 
+        private void Update()
+        {
+            var coding = new CodingSession();
+            Get("Please select the id number you want to update");
+            var id = Console.ReadLine();
+            var startTime = GetStartEndTime("Please type the start time you want to update in format (hh:mm)");
+            var endTime = GetStartEndTime("Please type the end time you want to update in format (hh:mm)");
+            var duration = GetDuration(startTime, endTime);
+            coding.Id = Convert.ToInt32(id);
+            coding.StartTime = startTime;
+            coding.EndTime = endTime;
+            coding.Duration = duration;
+            databaseController.Update(coding);
+        }
+
         private string GetStartEndTime(string message)
         {
             Console.WriteLine(message);
@@ -101,10 +125,9 @@ namespace coding_tracker
 
             while (!DateTime.TryParseExact(startTimeInput, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
             {
-                Console.WriteLine("Input not valid please try again or type 0 to go back to main menu");
+                Console.WriteLine("Input not valid please try again ");
 
                 startTimeInput = Console.ReadLine();
-                if (startTimeInput == "0") Menu();
             }
 
             return startTimeInput;
@@ -117,7 +140,7 @@ namespace coding_tracker
             var duration = endDateTime - startDateTime;
 
             // Format the duration as a string in the format "hh:mm"
-            return $"{(int)duration.TotalHours:D2} hours :{duration.Minutes:D2} minutes";
+            return $"{(int)duration.TotalHours:D2} hours : {duration.Minutes:D2} minutes";
         }
     }
 }
