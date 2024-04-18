@@ -5,15 +5,15 @@ namespace coding_tracker
 {
     internal class DatabaseController
     {
-        private string connectionString = @"Data Source=coding-tracker.db";
+        private string connectionString = System.Configuration.ConfigurationManager.AppSettings.Get("ConnectionString");
 
         internal void Insert(CodingSession coding)
         {
             using (var connection = new SqliteConnection(connectionString))
             {
-                var sql = $"INSERT INTO codingSession(StartTime, EndTime, Duration) VALUES('{coding.StartTime}', '{coding.EndTime}', '{coding.Duration}')";
+                var sql = $"INSERT INTO codingSession(Date, StartTime, EndTime, Duration) VALUES('{coding.Date}', '{coding.StartTime}', '{coding.EndTime}', '{coding.Duration}')";
 
-                var session = new { StartTime = coding.StartTime, EndTime = coding.EndTime, Duration = coding.Duration };
+                var session = new { Date = coding.Date, StartTime = coding.StartTime, EndTime = coding.EndTime, Duration = coding.Duration };
 
                 connection.Execute(sql, session);
             }
@@ -31,7 +31,7 @@ namespace coding_tracker
                 {
                     foreach (var session in codingSessions)
                     {
-                        Console.WriteLine($"{session.Id} Start time: {session.StartTime} Endtime: {session.EndTime} Duration: {session.Duration}");
+                        Console.WriteLine($"{session.Id} Date:{session.Date} Start time: {session.StartTime} Endtime: {session.EndTime} Duration: {session.Duration}");
                     }
                 }
                 else Console.WriteLine("No rows found");
@@ -53,12 +53,12 @@ namespace coding_tracker
 
         internal void Update(CodingSession coding)
         {
-            var sql = $@"UPDATE codingSession SET StartTime = {coding.StartTime}, EndTime = {coding.EndTime}, Duration = {coding.Duration} WHERE Id = {coding.Id}";
+            var sql = @"UPDATE codingSession SET StartTime = @StartTime, EndTime = @EndTime, Duration = @Duration WHERE Id = @Id";
 
             using (var connection = new SqliteConnection(connectionString))
             {
                 if (coding.Id == 0) Console.Write("no rows available to edit");
-                var updatedRows = connection.Execute(sql);
+                var updatedRows = connection.Execute(sql, coding);
             }
         }
     }

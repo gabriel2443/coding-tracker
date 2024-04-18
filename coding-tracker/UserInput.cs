@@ -65,7 +65,10 @@ namespace coding_tracker
 
         private void Add()
         {
+            Console.Clear();
             var coding = new CodingSession();
+
+            coding.Date = DateTime.UtcNow.ToString("dd/MM/yy");
 
             var startTime = GetStartEndTime("Please insert the start time in format (hh:mm)");
 
@@ -73,7 +76,7 @@ namespace coding_tracker
 
             Console.WriteLine();
 
-            var endTime = GetStartEndTime("Press any key to enter your end time also in format (hh:mm)");
+            var endTime = GetStartEndTime("Press insert your end time also in format (hh:mm)");
             coding.EndTime = endTime;
 
             var duration = GetDuration(startTime, endTime);
@@ -87,9 +90,11 @@ namespace coding_tracker
 
         private void ProcessDelete()
         {
+            Console.Clear();
             var coding = new CodingSession();
+            databaseController.Read();
 
-            Get("Please enter the id you want to delete");
+            Console.Write("Write the number of the id you want to delete: ");
             var id = Console.ReadLine();
 
             while (!Int32.TryParse(id, out _) || Convert.ToInt32(id) < 0)
@@ -97,7 +102,6 @@ namespace coding_tracker
                 Console.WriteLine("Id invalid please type another id");
                 id = Console.ReadLine();
             }
-
             coding.Id = Convert.ToInt32(id);
 
             databaseController.Delete(coding);
@@ -105,8 +109,11 @@ namespace coding_tracker
 
         private void Update()
         {
+            Console.Clear();
             var coding = new CodingSession();
-            Get("Please select the id number you want to update");
+
+            databaseController.Read();
+            Console.WriteLine("Please select the id number you want to update");
             var id = Console.ReadLine();
             var startTime = GetStartEndTime("Please type the start time you want to update in format (hh:mm)");
             var endTime = GetStartEndTime("Please type the end time you want to update in format (hh:mm)");

@@ -6,7 +6,7 @@ namespace coding_tracker
     {
         internal void CreateDatabase()
         {
-            string connectionString = @"Data Source=coding-tracker.db";
+            string connectionString = System.Configuration.ConfigurationManager.AppSettings.Get("ConnectionString");
 
             using (var connection = new SqliteConnection(connectionString))
             {
@@ -14,7 +14,7 @@ namespace coding_tracker
 
                 var tableCmd = connection.CreateCommand();
 
-                tableCmd.CommandText = "CREATE TABLE IF NOT EXISTS codingSession( Id INTEGER PRIMARY KEY AUTOINCREMENT, StartTime TEXT, EndTime TEXT, Duration INTEGER )";
+                tableCmd.CommandText = "CREATE TABLE IF NOT EXISTS codingSession( Id INTEGER PRIMARY KEY AUTOINCREMENT, Date TEXT, StartTime TEXT, EndTime TEXT, Duration INTEGER )";
 
                 tableCmd.ExecuteNonQuery();
             };
